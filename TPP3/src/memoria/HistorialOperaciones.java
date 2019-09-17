@@ -21,14 +21,16 @@ import com.google.gson.JsonPrimitive;
 
 public class HistorialOperaciones implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
-	private ArrayList<String> operandos;
-	private ArrayList<Double> numeros;
+	private ArrayList<String> strings;
+	private ArrayList<Double> doubles;
 
 	public HistorialOperaciones() {
-		operandos = new ArrayList<String>();
-		numeros = new ArrayList<Double>();
+		strings = new ArrayList<String>();
+		doubles = new ArrayList<Double>();
 	}
-
+	/**
+	 * Metodo el cual crea un archivo de tipo Json tomando como parametro un string que usara para nombre.
+	 */
 	public void generarJSON(String archivo) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String json = gson.toJson(this);
@@ -42,12 +44,17 @@ public class HistorialOperaciones implements Serializable, Cloneable {
 			return;
 		}
 	}
-
+	
+/**
+ *
+ * toma como parametro un Objeto y un string, este string lo utiliza para el nombre de archivo donde se guardará el objeto
+ * pasado como parametro.
+  */
 	public void agregarAMemoria(Object o, String arch) {
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			String jsonString = gson.toJson(o);
-			FileWriter writer = new FileWriter("calcuSAn.json");
+			FileWriter writer = new FileWriter(arch);
 			writer.write(jsonString);
 			writer.close();
 		}
@@ -56,7 +63,9 @@ public class HistorialOperaciones implements Serializable, Cloneable {
 			ex.printStackTrace();
 		}
 	}
-
+	/**
+	 * trae de memoria un array con todos los valores de tipo number. ( los trae como double). 
+	 */
 	public ArrayList<Double> getNumsDMemo() {
 		ArrayList<Double> numerosARet = new ArrayList<Double>();
 		try {
@@ -65,8 +74,8 @@ public class HistorialOperaciones implements Serializable, Cloneable {
 			JsonElement datos = parser.parse(fr);
 			elementosSegunTipo(datos);
 
-			for (int i = 0; i < numeros.size(); i++) {
-				numerosARet.add(numeros.get(i));
+			for (int i = 0; i < doubles.size(); i++) {
+				numerosARet.add(doubles.get(i));
 			}
 			return numerosARet;
 		} 
@@ -76,17 +85,19 @@ public class HistorialOperaciones implements Serializable, Cloneable {
 			throw new RuntimeException("error archivo");
 		}
 	}
-
+	/**
+	 * trae del archivo todos los datos de tipo String en un array
+	 */
 	public ArrayList<String> traerOpsDMemo() {
 
 		ArrayList<String> operandosARet = new ArrayList<String>();
 		try {
-			operandos = new ArrayList<String>();
+			strings = new ArrayList<String>();
 			JsonParser parser = new JsonParser();
 			FileReader fr = new FileReader("calcuSAn.json");
 			JsonElement datos = parser.parse(fr);
 			elementosSegunTipo(datos);
-			Set<String> hashSet = new HashSet<String>(operandos);
+			Set<String> hashSet = new HashSet<String>(strings);
 			operandosARet.addAll(hashSet);
 			return operandosARet;
 		} 
@@ -97,7 +108,7 @@ public class HistorialOperaciones implements Serializable, Cloneable {
 		}
 	}
 
-	public ArrayList<Double> traerNumsDMemo() {
+	/*public ArrayList<Double> traerNumsDMemo() {
 		try {
 			JsonParser parser = new JsonParser();
 			FileReader fr = new FileReader("calcuSAn.json");
@@ -110,8 +121,11 @@ public class HistorialOperaciones implements Serializable, Cloneable {
 			ex.printStackTrace();
 			throw new RuntimeException("error archivo");
 		}
-	}
-
+	}*/
+	/**
+	 * limpia el archivo pasado como parametro.
+	 
+	 */
 	public void eliminarMemoria(String arch) {
 		try {
 			FileOutputStream fos = new FileOutputStream(arch);
@@ -124,15 +138,21 @@ public class HistorialOperaciones implements Serializable, Cloneable {
 			ex.printStackTrace();
 		}
 	}
-
+	/**
+	 * guarda en el archivo una linkedList de tipo Object. en el archivo pasado como parametro 
+	 **/
 	public void agregarAMemoria(LinkedList<Object> o, String arch) throws IOException {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String jsonString = gson.toJson(o);
-		FileWriter writer = new FileWriter("calcuSAn.json");
+		FileWriter writer = new FileWriter(arch);
 		writer.write(jsonString);
 		writer.close();
 	}
-
+	/**
+	 * 
+	 * funcion la cual toma un mapeo del elemento por medio de clave valor(lineas 159, 160) 
+ 	 luego recorre el mapeo y segun su tipo lo castea a double o string y lo agrega a la variable de instancia correspondiente
+	 **/
 	public void elementosSegunTipo(JsonElement elemento) {
 		if (elemento.isJsonObject()) {
 			JsonObject obj = elemento.getAsJsonObject();
@@ -154,22 +174,22 @@ public class HistorialOperaciones implements Serializable, Cloneable {
 		else if (elemento.isJsonPrimitive()) {
 			JsonPrimitive valor = elemento.getAsJsonPrimitive();
 			if (valor.isNumber()) {
-				numeros.add(valor.getAsDouble());
+				doubles.add(valor.getAsDouble());
 				return;
 			} 
 			else if (valor.isString()) {
 				if (!valor.getAsString().equals(""))
-					operandos.add(valor.getAsString());
+					strings.add(valor.getAsString());
 				return;
 			}
 		}
 	}
 
 	public ArrayList<Double> getNumeros() {
-		return numeros;
+		return doubles;
 	}
 
 	public ArrayList<String> getOperandos() {
-		return operandos;
+		return strings;
 	}
 }

@@ -6,27 +6,22 @@ import java.util.ArrayList;
 public class Estado implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String estadoOps;
-	private ArrayList<Integer> cantcaracteres;
+
 	
 	public Estado() {
-		this.estadoOps="";
-		this.cantcaracteres = new ArrayList<Integer>();
-		
+		this.estadoOps="";	
 	}
 	
+	/**
+	 * Guarda el string pasado como parametro en la variable de instancia
+	 * @param o
+	 */
 	public void SetEstado(String o) {
-		this.estadoOps=o;
-		this.cantcaracteres.add(o.length());
+		this.estadoOps=o;	
 	}
 
 	public String getEstadoNums() {
-		return this.estadoOps;
-		
+		return this.estadoOps;	
 	}
-	
-	public ArrayList<Integer> getCantCaract(){
-		return this.cantcaracteres;
-	}
-	
 	
 }
